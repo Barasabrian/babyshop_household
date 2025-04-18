@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Your Shopping Cart</h1>
+    
+    {% if cart.items.count %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.items.all %}
+                <tr>
+                    <td>
+                        <a href="{{ item.get_product.get_absolute_url }}">
+                            <img src="{{ item.get_product.image.url }}" width="50" class="me-2">
+                            {{ item.get_product.name }}
+                        </a>
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.get_product.price }}</td>
+                    <td>${{ item.get_cost }}</td>
+                    <td>
+                        <a href="{% url 'cart:cart_remove' item.id %}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                    <td><strong>${{ cart.get_total_price }}</strong></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="text-end">
+        <a href="{% url 'cart:checkout' %}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        Your cart is empty. <a href="{% url 'baby_product_list' %}">Continue shopping</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

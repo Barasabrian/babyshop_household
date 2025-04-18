@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Baby & Home - Your Family Essentials Store{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}One-stop shop for baby products and household essentials. Quality products for your family at affordable prices.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}baby products, household items, family essentials, baby shop, home goods{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    
+    <!-- Block for additional CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="{% block og_title %}Baby & Home - Family Essentials{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Quality baby products and household essentials for your family.{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar bg-primary text-white text-center py-2">
+        <div class="container">
+            <p class="mb-0">Free shipping on orders over $50! | <a href="{% url 'baby_shop:product_list' %}" class="text-white fw-bold">Shop Now</a></p>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-baby-carriage me-2"></i>Baby & Home
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="babyDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-baby me-1"></i> Baby Shop
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'baby_shop:product_list' %}">All Baby Products</a></li>
+                            <li><a class="dropdown-item" href="{% url 'baby_shop:category_list' %}">Categories</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% for category in baby_categories %}
+                            <li><a class="dropdown-item" href="{% url 'baby_shop:product_list_by_category' category.slug %}">{{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="householdDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-home me-1"></i> Household
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'household:product_list' %}">All Household Items</a></li>
+                            <li><a class="dropdown-item" href="{% url 'household:category_list' %}">Categories</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% for category in household_categories %}
+                            <li><a class="dropdown-item" href="{% url 'household:product_list_by_category' category.slug %}">{{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'baby_shop:product_list' %}?is_featured=true">
+                            <i class="fas fa-star me-1"></i> Featured
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'baby_shop:product_list' %}?discounted_price__isnull=false">
+                            <i class="fas fa-tag me-1"></i> Deals
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Search Form -->
+                <form class="d-flex me-3" action="{% url 'baby_shop:product_search' %}" method="get">
+                    <div class="input-group">
+                        <input type="search" name="q" class="form-control" placeholder="Search products..." aria-label="Search">
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- User and Cart -->
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-1"></i> My Account</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-box-open me-1"></i> My Orders</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-1"></i> Wishlist</a></li>
+                            {% if user.is_staff %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-cog me-1"></i> Admin</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}"><i class="fas fa-user-plus me-1"></i> Register</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a href="{% url 'cart:cart_detail' %}" class="nav-link position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {% if cart %}{{ cart.items.count }}{% else %}0{% endif %}
+                                <span class="visually-hidden">items in cart</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        {% if messages %}
+        <div class="row">
+            <div class="col-12">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% block breadcrumbs %}
+        {% endblock %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3">Baby & Home</h5>
+                    <p>Your one-stop shop for all baby essentials and household items.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3">Baby Shop</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'baby_shop:product_list' %}" class="text-white">All Products</a></li>
+                        <li class="mb-2"><a href="{% url 'baby_shop:category_list' %}" class="text-white">Categories</a></li>
+                        <li class="mb-2"><a href="{% url 'baby_shop:product_list' %}?is_featured=true" class="text-white">Featured</a></li>
+                        <li class="mb-2"><a href="{% url 'baby_shop:product_list' %}?discounted_price__isnull=false" class="text-white">On Sale</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">New Arrivals</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3">Household</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'household:product_list' %}" class="text-white">All Products</a></li>
+                        <li class="mb-2"><a href="{% url 'household:category_list' %}" class="text-white">Categories</a></li>
+                        <li class="mb-2"><a href="{% url 'household:product_list' %}?is_featured=true" class="text-white">Featured</a></li>
+                        <li class="mb-2"><a href="{% url 'household:product_list' %}?discounted_price__isnull=false" class="text-white">On Sale</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Best Sellers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3">Customer Service</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">FAQs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Shipping Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Returns & Exchanges</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h5>Subscribe to Our Newsletter</h5>
+                    <form class="row g-2">
+                        <div class="col-8">
+                            <input type="email" class="form-control" placeholder="Your email address">
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary w-100">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="col-md-6 mb-3 text-md-end">
+                    <p class="mb-1">Accepted Payment Methods:</p>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa fa-2x me-2"></i>
+                        <i class="fab fa-cc-mastercard fa-2x me-2"></i>
+                        <i class="fab fa-cc-amex fa-2x me-2"></i>
+                        <i class="fab fa-cc-paypal fa-2x me-2"></i>
+                        <i class="fab fa-cc-discover fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <p class="mb-0">&copy; {% now "Y" %} Baby & Home. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="btn btn-primary btn-lg back-to-top" role="button">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- Block for additional JS -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

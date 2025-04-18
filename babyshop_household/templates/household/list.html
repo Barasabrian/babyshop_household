@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Household Products{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Household Products</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="?sort=price_asc">Price: Low to High</a></li>
+                    <li><a class="dropdown-item" href="?sort=price_desc">Price: High to Low</a></li>
+                    <li><a class="dropdown-item" href="?sort=newest">Newest Arrivals</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Filters</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Categories</h6>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'household_product_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">All Categories</a>
+                        {% for cat in categories %}
+                        <a href="{% url 'household_product_list_by_category' cat.slug %}" class="list-group-item list-group-item-action {% if category.slug == cat.slug %}active{% endif %}">
+                            {{ cat.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if category %}
+            <div class="alert alert-info mb-4">
+                Showing products in category: <strong>{{ category.name }}</strong>
+                <a href="{% url 'household_product_list' %}" class="float-end">Clear filter</a>
+            </div>
+            {% endif %}
+            
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 product-card">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-muted">{{ product.get_material_display }}</p>
+                            <p class="card-text fw-bold">${{ product.price }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-primary">View Details</a>
+                            <a href="{% url 'cart:cart_add_household' product.id %}" class="btn btn-sm btn-outline-secondary float-end">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-warning">No products found.</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
