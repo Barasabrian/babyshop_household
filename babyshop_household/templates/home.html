@@ -1,78 +1,123 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <section class="hero-section mb-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 d-flex align-items-center">
-                <div>
-                    <h1 class="display-4 fw-bold">Welcome to Baby & Home</h1>
-                    <p class="lead">Everything you need for your little ones and your home in one place.</p>
-                    <div class="d-flex gap-3">
-                        <a href="{% url 'baby_shop:product_list' %}" class="btn btn-primary btn-lg">Baby Shop</a>
-                        <a href="{% url 'household:product_list' %}" class="btn btn-outline-primary btn-lg">Household</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <img src="{% static 'images/hero-image.jpg' %}" alt="Happy family" class="img-fluid rounded">
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 d-flex align-items-center">
+        <div>
+          <h1 class="display-4 fw-bold">Welcome to Baby & Home</h1>
+          <p class="lead">
+            Everything you need for your little ones and your home in one place.
+          </p>
+          <div class="d-flex gap-3">
+            <a
+              href="{% url 'baby_shop:product_list' %}"
+              class="btn btn-primary btn-lg"
+              >Baby Shop</a
+            >
+            <a
+              href="{% url 'household:product_list' %}"
+              class="btn btn-outline-primary btn-lg"
+              >Household</a
+            >
+          </div>
         </div>
+      </div>
+      <div class="col-md-6">
+        <img
+          src="{% static 'images/happy_family.jpg' %}"
+          alt="Happy family"
+          class="img-fluid rounded"
+        />
+      </div>
     </div>
+  </div>
 </section>
 
 <section class="mb-5">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Featured Baby Products</h2>
-            <a href="{% url 'baby_shop:product_list' %}" class="btn btn-outline-primary">View All</a>
-        </div>
-        <div class="row">
-            {% for product in baby_products %}
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 product-card">
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text text-muted">{{ product.age_range }}</p>
-                        <p class="card-text fw-bold">${{ product.price }}</p>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-primary">View Details</a>
-                        <a href="{% url 'cart:cart_add_baby' product.id %}" class="btn btn-sm btn-outline-secondary float-end">Add to Cart</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Featured Baby Products</h2>
+      <a
+        href="{% url 'baby_shop:product_list' %}"
+        class="btn btn-outline-primary"
+        >View All</a
+      >
     </div>
+    <div class="row">
+      {% for product in baby_products %}
+      <div class="col-md-3 mb-4">
+        <div class="card h-100 product-card">
+          <img
+            src="{{ product.image.url }}"
+            class="card-img-top"
+            alt="{{ product.name }}"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text text-muted">{{ product.age_range }}</p>
+            <p class="card-text fw-bold">${{ product.price }}</p>
+          </div>
+          <div class="card-footer bg-transparent">
+            <a
+              href="{{ product.get_absolute_url }}"
+              class="btn btn-sm btn-primary"
+              >View Details</a
+            >
+            <a
+              href="{% url 'cart:cart_add_baby' product.id %}"
+              class="btn btn-sm btn-outline-secondary float-end"
+              >Add to Cart</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </section>
 
 <section class="mb-5">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Featured Household Items</h2>
-            <a href="{% url 'household:product_list' %}" class="btn btn-outline-primary">View All</a>
-        </div>
-        <div class="row">
-            {% for product in household_products %}
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 product-card">
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text text-muted">{{ product.get_material_display }}</p>
-                        <p class="card-text fw-bold">${{ product.price }}</p>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-primary">View Details</a>
-                        <a href="{% url 'cart:cart_add_household' product.id %}" class="btn btn-sm btn-outline-secondary float-end">Add to Cart</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Featured Household Items</h2>
+      <a
+        href="{% url 'household:product_list' %}"
+        class="btn btn-outline-primary"
+        >View All</a
+      >
     </div>
+    <div class="row">
+      {% for product in household_products %}
+      <div class="col-md-3 mb-4">
+        <div class="card h-100 product-card">
+          <img
+            src="{{ product.image.url }}"
+            class="card-img-top"
+            alt="{{ product.name }}"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text text-muted">
+              {{ product.get_material_display }}
+            </p>
+            <p class="card-text fw-bold">${{ product.price }}</p>
+          </div>
+          <div class="card-footer bg-transparent">
+            <a
+              href="{{ product.get_absolute_url }}"
+              class="btn btn-sm btn-primary"
+              >View Details</a
+            >
+            <a
+              href="{% url 'cart:cart_add_household' product.id %}"
+              class="btn btn-sm btn-outline-secondary float-end"
+              >Add to Cart</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </section>
 {% endblock %}
