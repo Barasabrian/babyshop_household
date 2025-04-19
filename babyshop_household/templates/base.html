@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,14 +98,26 @@
                     </li>
                 </ul>
                 
-                <!-- Search Form -->
-                <form class="d-flex me-3" action="{% url 'baby_shop:product_search' %}" method="get">
-                    <div class="input-group">
-                        <input type="search" name="q" class="form-control" placeholder="Search products..." aria-label="Search">
-                        <button class="btn btn-outline-light" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+                              <!-- Search Form - Place this in your navbar section -->
+                <form class="d-flex me-3 position-relative" action="{% url 'baby_shop:product_search' %}" method="get" id="search-form">
+                  <div class="input-group">
+                      <input type="search" 
+                            name="q" 
+                            class="form-control" 
+                            placeholder="Search products..." 
+                            aria-label="Search" 
+                            id="search-input"
+                            autocomplete="off">
+                      <button class="btn btn-outline-light" type="submit">
+                          <i class="fas fa-search"></i>
+                      </button>
+                  </div>
+                  <!-- Search Results Dropdown -->
+                  <div id="search-results" class="position-absolute top-100 start-0 end-0 bg-white shadow mt-1 d-none" style="z-index: 1050;">
+                      <div class="list-group list-group-flush">
+                         
+                      </div>
+                  </div>
                 </form>
                 
                 <!-- User and Cart -->

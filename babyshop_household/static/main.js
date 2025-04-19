@@ -192,3 +192,65 @@ function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args);
   };
 }
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('search-input');
+  const searchForm = document.getElementById('search-form');
+  const searchResults = document.getElementById('search-results');
+
+  if (searchInput && searchForm && searchResults) {
+    // Get the search URL from a data attribute
+    const searchUrl = searchForm.getAttribute('action');
+
+    // Live search on input
+    searchInput.addEventListener('input', debounce(function () {
+      const query = this.value.trim();
+      if (query.length > 2) {
+        fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Display results in dropdown
+            if (data.length > 0) {
+              searchResults.innerHTML = data.map(product => `
+                          <a href="${product.url}" class="dropdown-item d-flex align-items-center p-2">
+                              ${product.image ? `<img src="${product.image}" width="40" height="40" class="me-2">` : ''}
+                              <div>
+                                  <div>${product.name}</div>
+                                  <small class="text-muted">$${product.price}</small>
+                              </div>
+                          </a>
+                      `).join('');
+              searchResults.classList.remove('d-none');
+            } else {
+              searchResults.innerHTML = '<div class="dropdown-item">No results found</div>';
+              searchResults.classList.remove('d-none');
+            }
+          })
+          .catch(error => {
+            console.error('Search error:', error);
+            searchResults.classList.add('d-none');
+          });
+      } else {
+        searchResults.classList.add('d-none');
+      }
+    }, 300));
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!searchForm.contains(e.target)) {
+        searchResults.classList.add('d-none');
+      }
+    });
+
+    // Prevent form submission if empty
+    searchForm.addEventListener('submit', function (e) {
+      if (searchInput.value.trim() === '') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+  }
+});

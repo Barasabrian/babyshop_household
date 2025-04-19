@@ -32,9 +32,9 @@
                 <div class="card-body">
                     <h6>Categories</h6>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'baby_product_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">All Categories</a>
+                        <a href="{% url 'baby_shop:product_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">All Categories</a>
                         {% for cat in categories %}
-                        <a href="{% url 'baby_product_list_by_category' cat.slug %}" class="list-group-item list-group-item-action {% if category.slug == cat.slug %}active{% endif %}">
+                        <a href="{% url 'baby_shop:product_list_by_category' cat.slug %}" class="list-group-item list-group-item-action {% if category.slug == cat.slug %}active{% endif %}">
                             {{ cat.name }}
                         </a>
                         {% endfor %}
@@ -47,7 +47,7 @@
             {% if category %}
             <div class="alert alert-info mb-4">
                 Showing products in category: <strong>{{ category.name }}</strong>
-                <a href="{% url 'baby_product_list' %}" class="float-end">Clear filter</a>
+                <a href="{% url 'baby_shop:product_list' %}" class="float-end">Clear filter</a>
             </div>
             {% endif %}
             

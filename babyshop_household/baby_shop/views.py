@@ -133,20 +133,38 @@ class AddReviewView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('baby_shop:product_detail', kwargs={'slug': self.kwargs['slug']})
 
-class ProductSearchView(View):
-    def get(self, request):
-        query = request.GET.get('q', '')
+class ProductSearchView(ListView):
+    model = BabyProduct
+    template_name = 'baby_shop/search_results.html'
+    context_object_name = 'products'
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(is_active=True)
+        query = self.request.GET.get('q', '')
+        
         if query:
-            products = BabyProduct.objects.filter(
+            queryset = queryset.filter(
                 Q(name__icontains=query) |
-                Q(description__icontains=query),
-                is_active=True
-            )[:10]
-            results = [{
+                Q(description__icontains=query)
+            )
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # AJAX request - return JSON
+            data = [{
                 'name': product.name,
                 'url': product.get_absolute_url(),
                 'image': product.primary_image.url if product.primary_image else '',
                 'price': str(product.price)
-            } for product in products]
-            return JsonResponse(results, safe=False)
-        return JsonResponse([], safe=False)
+            } for product in context['products']]
+            return JsonResponse(data, safe=False)
+        # Regular request - return HTML
+        return super().render_to_response(context, **response_kwargs)
